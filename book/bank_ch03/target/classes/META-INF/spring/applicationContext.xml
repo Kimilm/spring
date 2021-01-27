@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?> <beans xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<import resource="applicationContextBeans.xml" />
+
+	<bean id="daoTemplate" abstract="true">
+		<property name="databaseOperations" ref="databaseOperations" />
+	</bean>
+
+	<bean id="databaseOperations"
+		class="kimilm.bank.utils.DatabaseOperations" />
+
+
+	<bean id="serviceTemplate"
+		class="kimilm.bank.base.ServiceTemplate">
+		<constructor-arg name="emailMessageSender"
+			ref="emailMessageSender" />
+		<constructor-arg name="jmsMessageSender"
+			ref="jmsMessageSender" />
+		<constructor-arg name="webServiceInvoker"
+			ref="webServiceInvoker" />
+	</bean>
+
+	<bean id="jmsMessageSender"
+		class="kimilm.bank.base.JmsMessageSender" />
+	<bean id="emailMessageSender"
+		class="kimilm.bank.base.EmailMessageSender" />
+	<bean id="webServiceInvoker"
+		class="kimilm.bank.base.WebServiceInvoker" />
+
+	<bean id="controllerFactory"
+		class="kimilm.bank.controller.ControllerFactory" />
+
+	<bean id="controllerTemplate" factory-bean="controllerFactory"
+		factory-method="getController" abstract="true">
+	</bean>
+
+	<bean id="fixedDepositController" parent="controllerTemplate">
+		<constructor-arg index="0"
+			value="fixedDepositController" />
+		<property name="fixedDepositService"
+			ref="fixedDepositService" />
+	</bean>
+
+	<bean id="fixedDepositService"
+		class="kimilm.bank.service.FixedDepositServiceImpl"
+		parent="serviceTemplate">
+		<property name="fixedDepositDao" ref="fixedDepositDao" />
+	</bean>
+
+	<bean id="fixedDepositDao" parent="daoTemplate"
+		class="kimilm.bank.dao.FixedDepositDaoImpl" />
+
+	<bean id="fixedDepositDetails"
+		class="kimilm.bank.domain.FixedDepositDetails" scope="prototype" />
+
+	<bean id="personalBankingController" parent="controllerTemplate">
+		<constructor-arg index="0"
+			value="personalBankingController" />
+		<property name="personalBankingService"
+			ref="personalBankingService" />
+	</bean>
+
+	<bean id="personalBankingService"
+		class="kimilm.bank.service.PersonalBankingServiceImpl"
+		parent="serviceTemplate">
+		<property name="personalBankingDao" ref="personalBankingDao" />
+	</bean>
+
+	<bean id="personalBankingDao" parent="daoTemplate"
+		class="kimilm.bank.dao.PersonalBankingDaoImpl" />
+
+	<bean id="userRequestController"
+		class="kimilm.bank.controller.UserRequestControllerImpl">
+		<constructor-arg name="serviceTemplate"
+			ref="serviceTemplate" />
+	</bean>
+
+	<bean id="transferFundsService"
+		class="kimilm.bank.service.TransferFundsServiceImpl">
+		<constructor-arg name="webServiceUrl"
+			value="http://someUrl.com/xyz" />
+		<constructor-arg name="active" value="true" />
+		<constructor-arg name="numberOfRetrialAttempts"
+			value="5" />
+		<constructor-arg name="timeout" value="200" />
+	</bean>
+	
+	<bean id="service"
+		class="kimilm.bank.service.FixedDepositServiceImpl2">
+		<property name="fixedDepositDao" ref="dao" />
+		<property name="eventSender" ref="eventSenderFactory" />
+	</bean>
+
+	<bean id="dao"
+		class="kimilm.bank.dao.FixedDepositDaoImpl2" />
+	
+	<bean id="eventSenderFactory" class="kimilm.bank.event.EventSenderFactoryBean">
+		<property name="databasePropertiesFile" value="META-INF/config/database.properties"/>
+	</bean>
+</beans>
