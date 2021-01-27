@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean id="controller"
+		class="kimilm.bank.controller.FixedDepositControllerImpl">
+		<property name="fixedDepositService" ref="service" />
+	</bean>
+
+	<bean id="service"
+		class="kimilm.bank.service.FixedDepositServiceImpl">
+		<property name="fixedDepositDao" ref="dao" />
+	</bean>
+
+	<bean id="dao"
+		class="kimilm.bank.dao.FixedDepositHibernateDao" />
+		
+	<bean id="fixedDepositDetails"
+		class="kimilm.bank.domain.FixedDepositDetails"
+		scope="prototype" />
+		
+		<bean id="dao1"
+		class="kimilm.bank.dao.FixedDepositDaoImpl" />
+		
+		<bean id="dao2"
+		class="kimilm.bank.dao.FixedDepositDaoImpl" />
+</beans>
