@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean id="service"
+		class="kimilm.bank.service.FixedDepositServiceImpl">
+		<property name="fixedDepositDao">
+			<bean class="kimilm.bank.dao.FixedDepositDaoImpl" />
+		</property>
+		<constructor-arg index="0"
+			value="META-INF/config/appConfig.properties" />
+	</bean>
+
+	<bean id="eventSenderSelectorService"
+		class="kimilm.bank.service.EventSenderSelectorServiceImpl">
+		<constructor-arg index="0"
+			value="META-INF/config/appConfig.properties" />
+	</bean>
+
+	<bean id="customerRequestService"
+		class="kimilm.bank.service.CustomerRequestServiceImpl">
+		<constructor-arg name="customerRequestDao"
+			ref="customerRequestDao" />
+		<!-- <lookup-method bean="customerRequestDetails" name="getCustomerRequestDetails"/> -->
+		<replaced-method name="getMyBean" replacer="methodReplacer" />
+	</bean>
+	
+	<bean id="methodReplacer" class="kimilm.bank.service.MyMethodReplacer" />
+
+	<bean id="customerRequestDetails"
+		class="kimilm.bank.domain.CustomerRequestDetails" scope="prototype" />
+
+	<bean id="customerRequestDao"
+		class="kimilm.bank.dao.CustomerRequestDaoImpl" />
+
+	<bean id="customerRegistrationService"
+		class="kimilm.bank.service.CustomerRegistrationServiceImpl"
+		scope="prototype" autowire="constructor">
+		<!-- <constructor-arg name="customerRegistrationDetails"
+			ref="customerRegistrationDetails" />
+		<constructor-arg name="customerRegistrationDao"
+			ref="customerRegistrationDao" /> -->
+	</bean>
+
+	<bean id="customerRegistrationDetails"
+		class="kimilm.bank.domain.CustomerRegistrationDetails"
+		scope="prototype" />
+
+	<bean id="customerRegistrationDao"
+		class="kimilm.bank.dao.CustomerRegistrationDaoImpl" />
+</beans>
